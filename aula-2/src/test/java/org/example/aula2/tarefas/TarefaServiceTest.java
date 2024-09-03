@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -37,5 +39,16 @@ class TarefaServiceTest {
 
     @Test
     void listarTarefas() {
+
+        // given - dado
+        Tarefa tarefa = new Tarefa(1L, "nome", "descricao");
+        when(repository.findAll()).thenReturn(List.of(tarefa));
+
+        // when - quando
+        List<Tarefa> retorno = service.listarTarefas();
+
+        // then - então
+        assertNotNull(retorno);
+        assertEquals(tarefa.getNome(), retorno.get(0).getNome());
     }
 }
