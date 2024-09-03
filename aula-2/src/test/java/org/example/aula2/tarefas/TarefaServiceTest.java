@@ -1,17 +1,21 @@
 package org.example.aula2.tarefas;
 
 import org.example.aula2.repository.TarefaRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TarefaServiceTest {
@@ -19,13 +23,22 @@ class TarefaServiceTest {
     @Mock
     TarefaRepository repository;
 
+    //@Spy
+    //TarefaMapper mapper;
+
     @InjectMocks
     TarefaService service;
+
+    static Tarefa tarefa;
+
+    @BeforeAll
+    public static void setUp() {
+        tarefa = new Tarefa(1L, "nome", "descricao");
+    }
 
     @Test
     void adicionarTarefa() {
         // given - dado
-        Tarefa tarefa = new Tarefa(1L, "nome", "descricao");
         when(repository.save(any())).thenReturn(tarefa);
 
         // when - quando
@@ -35,13 +48,15 @@ class TarefaServiceTest {
         assertNotNull(retorno);
         assertEquals(tarefa.getNome(), retorno.getNome());
 
+        verify(repository, times(1))
+                .save(any()); // valida se o teste passou pela linha de código do repository com o metodo save
+
     }
 
     @Test
     void listarTarefas() {
 
         // given - dado
-        Tarefa tarefa = new Tarefa(1L, "nome", "descricao");
         when(repository.findAll()).thenReturn(List.of(tarefa));
 
         // when - quando
@@ -50,5 +65,19 @@ class TarefaServiceTest {
         // then - então
         assertNotNull(retorno);
         assertEquals(tarefa.getNome(), retorno.get(0).getNome());
+    }
+
+    @Test
+    void retornarTarefa() {
+
+        // given - dado
+        when(repository.findById(anyLong())).thenReturn(
+                Optional.ofNullable(tarefa)
+        );
+
+        // valida se nenhum erro ocorreu
+        assertDoesNotThrow(
+                () -> service.retornarTarefa(1L)
+        );
     }
 }
