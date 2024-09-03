@@ -1,6 +1,4 @@
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,9 +9,19 @@ class CalculadoraTest {
         System.out.println("Antes do metodo");;
     }
 
+    @AfterEach
+    public void aposCadaMetodo(){
+        System.out.println("Após método");
+    }
+
     @BeforeAll
     public static void antesDeTodosMetodo(){
-        System.out.println("Antes de tudo");;
+        System.out.println("Antes dos testes da classe");;
+    }
+
+    @AfterAll
+    public static void aposTodosMetodo(){
+        System.out.println("Após todos os testes da classe");
     }
 
     @Test
@@ -34,5 +42,29 @@ class CalculadoraTest {
 
         // valida se os parametros são iguas
         assertEquals(4.0, resultado);
+        assertNotEquals(3.0, resultado);
+
+        assertTrue(resultado > 2.0);
+        assertFalse(resultado==3.0);
     }
+
+    @Test
+    void divisao() {
+        Calculadora calculadora = new Calculadora();
+
+        assertThrows( ArithmeticException.class,
+                () -> calculadora.divisao(3.0,0.0)
+        );
+    }
+
+    @Test
+    void multipicacao(){
+        Calculadora calculadora = new Calculadora();
+
+        Double resultado = calculadora.multiplica(2.0, 3.0, 4.0);
+
+        assertEquals(24.0, resultado);
+    }
+
+
 }
